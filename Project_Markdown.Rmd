@@ -11,7 +11,7 @@ header-includes:
 \Large \textbf{Assignment 7}
 \end{center}
 \vspace{-0.1cm}
-git
+
 # 1st Task: Reproduce Figure 6.20
 
 ### 1.1 Setup and Data
