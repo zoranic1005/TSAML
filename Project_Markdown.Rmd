@@ -21,7 +21,7 @@ setwd("../Project_Solution")
 library(pls)
 Credit <- read.csv("../Project_Solution/Credit.csv")
 
-set.seed(1) # Set seed for reproducibility of PCR A 
+set.seed(1) # Set seed for reproducibility of PCR 
 ```
 
 ### 1.2 Run Principal Component Regression
