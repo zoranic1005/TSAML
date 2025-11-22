@@ -29,15 +29,15 @@ set.seed(1) # Set seed for reproducibility of PCR
 
 ### 1.2 Run Principal Component Regression
 
-It combines your correlated variables into a smaller set of new uncorrelated "super-variables" called Principal Components.
-
+PCA turns variables that use different scales and are correlated into a smaller set of new variables that all use the same scale, are uncorrelated.
+PCR then predicts Balance using these standardized super-variables, and cross-validation assesses model fit. 
 ```{r run_pcr}
 pcr_model <- pcr(
   # standardize the data to a z-Distribution (scale = TRUE)
   Balance ~ ., data = Credit, scale = TRUE, validation = "CV")
 ```
 
-What is done is the following: $$
+Normalising is done by transforming each variable X into a z-value, which means subtracting its mean and dividing by its standard deviation: $$
 Z_m = \sum_{j=1}^{p} \phi_{jm} X_j,
 \qquad
 \text{with } \sum_{j=1}^{p} \phi_{jm}^2 = 1.
@@ -53,7 +53,7 @@ $$
 
 ### 1.3 Extract Coefficients
 
-The raw coefficients are a 3D array: `[Variables, Balance, PCs]`. We extract "Balance" because it's our dependent variable. For each category (e.g. Income), we take the coefficient that explains the relationship between that variable and Balance.
+The raw coefficients from a 3D array: `[Variables, Balance, PCs]`. We select "Balance" because it's our dependent variable. For each category (e.g. Income), we take the coefficient that explains the relationship between that variable and Balance.
 
 ```{r extract_coefficients}
 coef_matrix <- pcr_model$coefficients[, "Balance", ]
@@ -61,7 +61,7 @@ coef_matrix <- pcr_model$coefficients[, "Balance", ]
 
 ### 1.4 Data Preparation for Smoothing
 
-In Principal Component Analysis (PCA), we cannot create more components than we have input variables. Component 1 explains the most variance, while Component 11 explains the least. If we use all 11 components, our PCR model becomes exactly the same as a standard Ordinary Least Squares (OLS).
+In Principal Component Analysis (PCA), we cannot create more components than we have input variables. Component 1 explains the most variance, while Component 11 explains the least. If we use all 11 components, our PCR model becomes exactly the same as a standard OLS.
 
 ```{r data_prep_smoothing}
 n_components <- 11
@@ -69,7 +69,7 @@ stretch_factor <- 10
 # turns 11 data points into 110 so the plot is more beautiful (and like the textbook)
 ```
 
-Repeat the columns to match the plotting grid. Transpose (`t`) is used so that the plot reads components as x and variables as y.
+The stretch factor means we repeat each coefficient column several times to smoothen the plotting grid. We then transpose ('t') so that components appear on the x-axis and variables on the y-axis in the matplot.
 
 ```{r stretch_coefficients}
 stretched_coefs <- t(coef_matrix[, rep(1:n_components, each = stretch_factor)])
