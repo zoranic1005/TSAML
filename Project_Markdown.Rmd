@@ -83,7 +83,7 @@ x_grid <- seq(1, n_components, length = n_components * stretch_factor)
 
 ### 1.5 Plotting
 
-```{r plotting,fig.width=8, fig.height=4}
+```{r plotting,fig.width=8, fig.height=3.5}
 par(mfrow = c(1, 2))
 par(cex.axis = 0.7)
 head(stretched_coefs,0)
@@ -91,23 +91,51 @@ line_cols <- c("black", "red", "blue", "grey", "grey", "grey", "grey",
                "orange","grey", "grey", "grey")
 line_types <- c(1, 2, 3, 1, 1, 1, 1, 4, 1, 1, 1)
 line_widths <- c(2, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1)
-
 # --- Plot Left: Standardized Coefficients ---
 matplot(x_grid, stretched_coefs, type = 'l', col = line_cols, lty = line_types, 
-        lwd = line_widths, xlab = "Number of Components", 
-        ylab = "Standardized Coefficients", cex.lab = 0.8,
-        main="Plot 6.20", cex.main=1)
-legend("topleft", names(Credit)[c(1, 2, 3, 8)], col = c("black", "red", "blue", "orange"), 
-       lty = 1:4, lwd = 1, bty = "n", cex = 0.6)
+        lwd = line_widths, xlab = "Number of Components", ylab = 
+          "Standardized Coefficients", cex.lab = 0.8)
+legend("topleft", names(Credit)[c(1, 2, 3, 8)], col = c("black", "red", "blue",
+      "orange"),  lty = 1:4, lwd = 1, bty = "n", cex = 0.6)
 
 # --- Plot Right: Cross-Validation MSE ---
 # Using 'MSEP' function to extract Mean Squared Error of Prediction
 cv_mse <- MSEP(pcr_model)$val[1, 1, -1] 
-# $val$ (1-> Cross Validation Standard error, 1 -> Balance, -1 -> Remove Intercept )
-plot(cv_mse, 
-     col = "purple", type = "b", ylab = "Cross-Validation MSE", xlab = "Number of Components", 
-     cex.lab = 0.8)
+#$val$ (1-> Cross Validation SE, 1 -> Balance, -1 -> Remove Intercept )
+plot(cv_mse, col = "purple", type = "b", ylab = "Cross-Validation MSE", 
+     xlab = "Number of Components", cex.lab = 0.8)
 ```
+
+### 1.6 Empirical Results
+
+1.  
+
+2.  
+
+3.  
+
+4.  
+
+5.  
+
+6.  
+
+7.  
+
+8.  
+
+9.  
+
+10. 
+
+11. 
+
+12. 
+
+13.
+14.
+15.
+16.
 
 # 2nd Task: Ridge Regression & Shrinkage
 
@@ -134,7 +162,7 @@ $$ \text{Shrinkage}(\lambda) = \frac{\|\hat{\beta}^R_\lambda\|_2}{\|\hat{\beta}^
 
 ## 2.2. Explanation of Ridge Regression Norms
 
-Definition of Lambda ($\lambda$): $\lambda$ is the tuning parameter defined in shrinkage regression (Ridge), which serves to artificially minimize (shrink) the coefficients ($\beta$) Ridge Regression Formula, the general Ridge regression objective is:
+Lambda $\lambda$ is the tuning parameter defined in shrinkage regression (Ridge), which serves to artificially minimize (shrink) the coefficients ($\beta$) Ridge Regression Formula, the general Ridge regression objective is:
 
 $$RSS + \lambda\sum_{j=1}^{p}\beta_{j}^{2} \quad \quad \quad (Formula \quad 2.3)$$
 
@@ -183,12 +211,11 @@ $$
 \mathcal{L} &= y^{\top}y - 2\sum_{j=1}^{p}\beta_{j}x_{j}^{\top}y + \sum_{j=1}^{p}\beta_{j}^{2} + \lambda\sum_{j=1}^{p}\beta_{j}^{2} \quad \quad \quad (Formula \quad 2.10)\\
 &= \sum_{j=1}^{p} y_j^2 - 2\sum_{j=1}^{p}\beta_{j}y_{j} + \sum_{j=1}^{p}\beta_{j}^{2} + \lambda\sum_{j=1}^{p}\beta_{j}^{2} && \text{(Substitute scalar equivalents)} \\
 &= \sum_{j=1}^{p} \left( y_j^2 - 2\beta_{j}y_{j} + \beta_{j}^{2} \right) + \lambda\sum_{j=1}^{p}\beta_{j}^{2} && \text{(Group terms by index } j) \\
-&= \sum_{j=1}^{p} (y_j - \beta_j)^2 + \sum_{j=1}^{p} \lambda \beta_j^2 && \text{(Complete the square)} \\
 &= \sum_{j=1}^{p} \left[ (y_j - \beta_j)^2 + \lambda \beta_j^2 \right] && \text{(Final Sum of Independent Problems)}
 \end{aligned}
 $$
 
-To find the minimum, we differentiate the term inside the brackets with respect to $\beta_j$: $$ \frac{\partial\mathcal{L}}{\partial \beta_j} \left( (y_j - \beta_j)^2 + \lambda \beta_j^2 \right) = -2(y_j - \beta_j) + 2\lambda\beta_j = 0 $$ $$\frac{\partial\mathcal{L}}{\partial\beta_{j}} = -2(y_{j}-\beta_{j}) + 2\lambda\beta_{j} = 0$$ $$-2y_{j} + 2(1+\lambda)\beta_{j} = 0$$
+To find the minimum, we differentiate the term inside the brackets with respect to $\beta_j$: $$ \frac{\partial\mathcal{L}}{\partial \beta_j} \left( (y_j - \beta_j)^2 + \lambda \beta_j^2 \right) = -2(y_j - \beta_j) + 2\lambda\beta_j = 0 $$ $$-2y_{j} + 2(1+\lambda)\beta_{j} = 0$$
 
 Rearranging for $\beta_j$ yields the Ridge estimator for this special case: $$\hat{\beta}_{j,\lambda}^{R} = \frac{y_{j}}{1+\lambda} \quad \quad \quad (Formula \quad 2.9) $$
 
@@ -199,7 +226,7 @@ B <- sapply(L, function(l) solve(XtX+diag(l,ncol(X)), Xty))
 rat <- apply(B, 2, function(b) sqrt(sum(b^2))) / sqrt(sum(solve(XtX,Xty)^2))
 par(mar = c(5.1, 6.5, 4.1, 2.1))
 plot(L, rat, type="l", log="x", col="darkblue", lwd=1.5,
-     xlab = expression(lambda), ylab = "", main = "Shrinkage Profile",las = 1)
+     xlab = expression(lambda), ylab = "", main = "Shrinkage Profile",las = 1, cex.main=0.8)
 title(ylab = expression(frac("||" * hat(beta)[lambda]^R * "||"[2], 
                              "||" * hat(beta)^OLS * "||"[2])), line = 2.1, cex.lab = 0.6)
 ```
@@ -210,8 +237,8 @@ Norm Relationship From the formula above, we can derive the relationship between
 
 Vector Form: Stacking the coefficients into a vector after rearranging Formula 2.9 yields: $$\hat{\beta}_{\lambda}^{R} = \frac{1}{1+\lambda}* y$$
 
-Squared $l_2$ Norm - Taking the squared $l_2$ norm of both sides: $$||\hat{\beta}_{\lambda}^{R}||_{2}^{2} = \frac{1}{(1+\lambda)^{2}}\sum_{j=1}^{p}y_{j}^{2}$$ $$||\hat{\beta}_{\lambda}^{R}||_{2}^{2} = \frac{1}{(1+\lambda)^{2}}||y||_{2}^{2}$$
+Final $l_2$ Norm on both sides - Taking the square root uses the standard identity $||cv||_{2} = |c| \cdot ||v||_{2}$:$$||\hat{\beta}_{\lambda}^{R}||_{2} = \frac{1}{1+\lambda}\sqrt{\sum_{j=1}^{p}y_{j}^{2}}$$
 
-Final $l_2$ Norm - Taking the square root uses the standard identity $||cv||_{2} = |c| \cdot ||v||_{2}$: $$||\hat{\beta}_{\lambda}^{R}||_{2} = \frac{1}{1+\lambda}||y||_{2} \quad \quad \quad (Formula \quad 2.12) $$
+$$||\hat{\beta}_{\lambda}^{R}||_{2} = \frac{1}{1+\lambda}||y||_{2} \quad \quad \quad (Formula \quad 2.12) $$
 
 This mathematical derivation confirms the statement: as $\lambda$ increases, the denominator $(1+\lambda)$ increases, causing the norm $||\hat{\beta}_{\lambda}^{R}||_{2}$ to decrease.
