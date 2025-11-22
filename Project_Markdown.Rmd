@@ -6,9 +6,9 @@ header-includes:
   - \everydisplay{\color{black}}
   - \setlength{\parskip}{0.1em}
   - \usepackage{wrapfig}
-fontsize: 10pt             # Options: 10pt, 11pt, 12pt
-geometry: margin=1in       # Sets all margins to 1 inch
-linestretch: 1           # 1.5 line spacing
+fontsize: 10pt             
+geometry: margin=0.9in       
+linestretch: 1           
 ---
 
 \begin{center}
@@ -113,7 +113,7 @@ plot(cv_mse,
 
 ### 2.1 Setup
 
-Problem - ISLR (p. 239): As $\lambda$ increases, the $\ell_2$-norm of $\hat{\beta}_\lambda$ decreases, and so does $\frac{\|\hat{\beta}^R_\lambda\|_2}{\|\hat{\beta}^{\mathrm{OLS}}\|_2}$."
+Problem - ISLR (p. 239): "As $\lambda$ increases, the $\ell_2$-norm of $\hat{\beta}_\lambda$ decreases, and so does $\frac{\|\hat{\beta}^R_\lambda\|_2}{\|\hat{\beta}^{\mathrm{OLS}}\|_2}$."
 
 Goal:
 
@@ -190,7 +190,7 @@ $$
 
 To find the minimum, we differentiate the term inside the brackets with respect to $\beta_j$: $$ \frac{\partial\mathcal{L}}{\partial \beta_j} \left( (y_j - \beta_j)^2 + \lambda \beta_j^2 \right) = -2(y_j - \beta_j) + 2\lambda\beta_j = 0 $$ $$\frac{\partial\mathcal{L}}{\partial\beta_{j}} = -2(y_{j}-\beta_{j}) + 2\lambda\beta_{j} = 0$$ $$-2y_{j} + 2(1+\lambda)\beta_{j} = 0$$
 
-Rearranging for $\beta_j$ yields the Ridge estimator for this special case: $$\hat{\beta}_{j,\lambda}^{R} = \frac{y_{j}}{1+\lambda} \quad \quad \quad (Formula \quad 2.11) $$
+Rearranging for $\beta_j$ yields the Ridge estimator for this special case: $$\hat{\beta}_{j,\lambda}^{R} = \frac{y_{j}}{1+\lambda} \quad \quad \quad (Formula \quad 2.9) $$
 
 ```{r plotting_norm_vs_lambda, fig.width=8, fig.height=2.5, fig.env='wrapfigure', fig.pos='l', out.width='100%'}
 X <- scale(model.matrix(Balance~.,Credit)[,-1]); y <- scale(Credit$Balance)[,1]
@@ -199,21 +199,19 @@ B <- sapply(L, function(l) solve(XtX+diag(l,ncol(X)), Xty))
 rat <- apply(B, 2, function(b) sqrt(sum(b^2))) / sqrt(sum(solve(XtX,Xty)^2))
 par(mar = c(5.1, 6.5, 4.1, 2.1))
 plot(L, rat, type="l", log="x", col="darkblue", lwd=1.5,
-     xlab = expression(lambda), ylab = "", # Suppress default label
-     main = "Shrinkage Profile",las = 1)
+     xlab = expression(lambda), ylab = "", main = "Shrinkage Profile",las = 1)
 title(ylab = expression(frac("||" * hat(beta)[lambda]^R * "||"[2], 
                              "||" * hat(beta)^OLS * "||"[2])), line = 2.1, cex.lab = 0.6)
-grid()
 ```
 
 ### 2.5 Results
 
 Norm Relationship From the formula above, we can derive the relationship between the norms
 
-Vector Form: Stacking the coefficients into a vector: $$\hat{\beta}_{\lambda}^{R} = \frac{1}{1+\lambda}* y$$
+Vector Form: Stacking the coefficients into a vector after rearranging Formula 2.9 yields: $$\hat{\beta}_{\lambda}^{R} = \frac{1}{1+\lambda}* y$$
 
-Squared $l_2$ Norm: Taking the squared $l_2$ norm of both sides: $$||\hat{\beta}_{\lambda}^{R}||_{2}^{2} = \frac{1}{(1+\lambda)^{2}}\sum_{j=1}^{p}y_{j}^{2}$$ $$||\hat{\beta}_{\lambda}^{R}||_{2}^{2} = \frac{1}{(1+\lambda)^{2}}||y||_{2}^{2}$$
+Squared $l_2$ Norm - Taking the squared $l_2$ norm of both sides: $$||\hat{\beta}_{\lambda}^{R}||_{2}^{2} = \frac{1}{(1+\lambda)^{2}}\sum_{j=1}^{p}y_{j}^{2}$$ $$||\hat{\beta}_{\lambda}^{R}||_{2}^{2} = \frac{1}{(1+\lambda)^{2}}||y||_{2}^{2}$$
 
-Final $l_2$ Norm: Taking the square root uses the standard identity $||cv||_{2} = |c| \cdot ||v||_{2}$: $$||\hat{\beta}_{\lambda}^{R}||_{2} = \frac{1}{1+\lambda}||y||_{2}$$
+Final $l_2$ Norm - Taking the square root uses the standard identity $||cv||_{2} = |c| \cdot ||v||_{2}$: $$||\hat{\beta}_{\lambda}^{R}||_{2} = \frac{1}{1+\lambda}||y||_{2} \quad \quad \quad (Formula \quad 2.12) $$
 
 This mathematical derivation confirms the statement: as $\lambda$ increases, the denominator $(1+\lambda)$ increases, causing the norm $||\hat{\beta}_{\lambda}^{R}||_{2}$ to decrease.
