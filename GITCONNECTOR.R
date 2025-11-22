@@ -8,5 +8,5 @@ repo <- repository("~/Project_Solution")
 # This will open a popup box asking for your Password/Token.
 # username: zoranic1005
 push(repo, name = "origin", refspec = "refs/heads/master", 
-     credentials = cred_user_pass("zoranic1005", askForPassword("Enter GitHub
+     credentials = cred_user_pass("zoranic1005", askForPassword("Enter GitHub")
      
