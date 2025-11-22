@@ -29,8 +29,8 @@ set.seed(1) # Set seed for reproducibility of PCR
 
 ### 1.2 Run Principal Component Regression
 
-PCA turns variables that use different scales and are correlated into a smaller set of new variables that all use the same scale, are uncorrelated.
-PCR then predicts Balance using these standardized super-variables, and cross-validation assesses model fit.:
+PCA turns variables that use different scales and are correlated into a smaller set of new variables that all use the same scale, are uncorrelated. PCR then predicts Balance using these standardized super-variables, and cross-validation assesses model fit.:
+
 ```{r run_pcr}
 pcr_model <- pcr(
   # standardize the data to a z-Distribution (scale = TRUE)
