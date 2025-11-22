@@ -5,6 +5,7 @@ header-includes:
   - \everymath{\color{black}}
   - \everydisplay{\color{black}}
   - \setlength{\parskip}{0.1em}
+  - \usepackage{wrapfig}
 fontsize: 10pt             # Options: 10pt, 11pt, 12pt
 geometry: margin=1in       # Sets all margins to 1 inch
 linestretch: 1           # 1.5 line spacing
@@ -23,7 +24,6 @@ linestretch: 1           # 1.5 line spacing
 setwd("~/Project_Solution")
 library(pls)
 Credit <- read.csv("../Project_Solution/Credit.csv")
-
 set.seed(1) # Set seed for reproducibility of PCR 
 ```
 
@@ -83,7 +83,7 @@ x_grid <- seq(1, n_components, length = n_components * stretch_factor)
 
 ### 1.5 Plotting
 
-```{r plotting,fig.width=8, fig.height=4.5}
+```{r plotting,fig.width=8, fig.height=4}
 par(mfrow = c(1, 2))
 par(cex.axis = 0.7)
 head(stretched_coefs,0)
@@ -91,13 +91,15 @@ line_cols <- c("black", "red", "blue", "grey", "grey", "grey", "grey",
                "orange","grey", "grey", "grey")
 line_types <- c(1, 2, 3, 1, 1, 1, 1, 4, 1, 1, 1)
 line_widths <- c(2, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1)
+
 # --- Plot Left: Standardized Coefficients ---
 matplot(x_grid, stretched_coefs, type = 'l', col = line_cols, lty = line_types, 
         lwd = line_widths, xlab = "Number of Components", 
         ylab = "Standardized Coefficients", cex.lab = 0.8,
-        main="Plot 6.20")
+        main="Plot 6.20", cex.main=1)
 legend("topleft", names(Credit)[c(1, 2, 3, 8)], col = c("black", "red", "blue", "orange"), 
        lty = 1:4, lwd = 1, bty = "n", cex = 0.6)
+
 # --- Plot Right: Cross-Validation MSE ---
 # Using 'MSEP' function to extract Mean Squared Error of Prediction
 cv_mse <- MSEP(pcr_model)$val[1, 1, -1] 
@@ -190,21 +192,17 @@ To find the minimum, we differentiate the term inside the brackets with respect 
 
 Rearranging for $\beta_j$ yields the Ridge estimator for this special case: $$\hat{\beta}_{j,\lambda}^{R} = \frac{y_{j}}{1+\lambda} \quad \quad \quad (Formula \quad 2.11) $$
 
-```{r plotting_norm_vs_lambda, fig.width=4.5, fig.height=3.5, fig.align='center'}
-library(latex2exp)
-
-# [Data Setup]
+```{r plotting_norm_vs_lambda, fig.width=8, fig.height=2.5, fig.env='wrapfigure', fig.pos='l', out.width='100%'}
 X <- scale(model.matrix(Balance~.,Credit)[,-1]); y <- scale(Credit$Balance)[,1]
 XtX <- t(X)%*%X; Xty <- t(X)%*%y; L <- exp(seq(-2,10,len=100))
 B <- sapply(L, function(l) solve(XtX+diag(l,ncol(X)), Xty))
 rat <- apply(B, 2, function(b) sqrt(sum(b^2))) / sqrt(sum(solve(XtX,Xty)^2))
-
-# [Plotting]
-par(mar = c(4, 6, 2, 1)) 
+par(mar = c(5.1, 6.5, 4.1, 2.1))
 plot(L, rat, type="l", log="x", col="darkblue", lwd=1.5,
-     xlab = TeX("$\\lambda$"), 
-     ylab = TeX("$\\frac{||\\hat{\\beta}^R_\\lambda||_2}{||\\hat{\\beta}^{OLS}||_2}$"),
-     main = "Shrinkage Profile", las=1, cex.lab=1.2)
+     xlab = expression(lambda), ylab = "", # Suppress default label
+     main = "Shrinkage Profile",las = 1)
+title(ylab = expression(frac("||" * hat(beta)[lambda]^R * "||"[2], 
+                             "||" * hat(beta)^OLS * "||"[2])), line = 2.1, cex.lab = 0.6)
 grid()
 ```
 
